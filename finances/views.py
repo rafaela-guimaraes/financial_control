@@ -1,6 +1,4 @@
-from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views import generic
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.views.generic import View
@@ -8,11 +6,12 @@ from .forms import UserForm, EntryForm
 from .models import Entry, Category
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class IndexView(View):
     template_name = 'finances/index.html'
 
-    def get(self,request):
+    def get(self, request):
         try:
             incomes = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='IN'))
         except ObjectDoesNotExist:
@@ -27,9 +26,8 @@ class IndexView(View):
                     'expenses': expenses,
                 })
 
-    def post(self,request):
+    def post(self, request):
         form = self.form_class(request.POST)
-
 
 
 class UserFormView(View):
@@ -66,10 +64,10 @@ class CreateEntry(CreateView):
     fields = ['category', 'description', 'amount', 'entry_date']
 
     def form_valid(self, form):
-	    entry = form.save(commit=False)
-	    entry.agent = self.request.user
-	    entry.save()
-	    return super(CreateEntry, self).form_valid(form)
+        entry = form.save(commit=False)
+        entry.agent = self.request.user
+        entry.save()
+        return super(CreateEntry, self).form_valid(form)
 
 
 class UpdateEntry(UpdateView):
@@ -77,18 +75,37 @@ class UpdateEntry(UpdateView):
     fields = ['category', 'description', 'amount', 'entry_date']
 
     def form_valid(self, form):
-	    entry = form.save(commit=False)
-	    entry.agent = self.request.user
-	    entry.save()
-	    return super(UpdateEntry, self).form_valid(form)
+        entry = form.save(commit=False)
+        entry.agent = self.request.user
+        entry.save()
+        return super(UpdateEntry, self).form_valid(form)
 
 
 class DeleteEntry(DeleteView):
     model = Entry
     success_url = reverse_lazy('finances:index')
 
+def login_user(request):
+        if request.method == "POST":
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return render(request, 'finances/index.html')        
+            else: 
+                return render(request, 'finances/login.html', {'error_message': 'Invalid username or password'})
+    
+        else:
+            return render(request, 'finances/login.html')
+        
+    
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
     return render(request, 'finances/index.html')
 
+
+        
+        
