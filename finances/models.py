@@ -31,7 +31,7 @@ class Entry(models.Model):
     amount = models.FloatField()
     entry_date = models.DateField(default=timezone.now)
 
-    def __str__(self):
-        return 'Agent: %s, Category: %s, Description: %s, Amount: %s, Entry Date: %s' % (
-            self.agent.id, self.category.id, self.description, self.amount, self.entry_date)
+   # def __str__(self):
+        # return 'Agent: %s, Category: %s, Description: %s, Amount: %s, Entry Date: %s' % (
+        #     self.agent.id, self.category.id, self.description, self.amount, self.entry_date)
 

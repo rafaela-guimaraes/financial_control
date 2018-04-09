@@ -1,17 +1,35 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import generic
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.views.generic import View
 from .forms import UserForm, EntryForm
+from .models import Entry, Category
+from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse_lazy
 
-
-class IndexView(generic.ListView):
+class IndexView(View):
     template_name = 'finances/index.html'
 
-    def get_queryset(self):
-        return []
+    def get(self,request):
+        try:
+            incomes = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='IN'))
+        except ObjectDoesNotExist:
+            incomes = None
+        try:
+            expenses = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='EX'))
+        except ObjectDoesNotExist:
+            expenses = None
+
+        return render(request, 'finances/index.html', {
+                    'incomes': incomes,
+                    'expenses': expenses,
+                })
+
+    def post(self,request):
+        form = self.form_class(request.POST)
+
 
 
 class UserFormView(View):
@@ -43,24 +61,34 @@ class UserFormView(View):
         return render(request, self.template_name, {"form": form})
 
 
-class EntryFormView(View):
-    form_class = EntryForm
-    template_name = 'finances/create_entry.html'
+class CreateEntry(CreateView):
+    model = Entry
+    fields = ['category', 'description', 'amount', 'entry_date']
 
-    def get(self, request):
-        form = self.form_class(None)
-        return render(request, self.template_name, {'form': form})
+    def form_valid(self, form):
+	    entry = form.save(commit=False)
+	    entry.agent = self.request.user
+	    entry.save()
+	    return super(CreateEntry, self).form_valid(form)
 
-    def post(self, request):
-        form = self.form_class(request.POST)
 
-        if form.is_valid():
-            entry = form.save(commit=False)
-            entry.agent = request.user
-            entry.save()
-            return render(request, 'finances/index.html')
+class UpdateEntry(UpdateView):
+    model = Entry
+    fields = ['category', 'description', 'amount', 'entry_date']
 
-        return render(request, self.template_name, {"form": form})
+    def form_valid(self, form):
+	    entry = form.save(commit=False)
+	    entry.agent = self.request.user
+	    entry.save()
+	    return super(UpdateEntry, self).form_valid(form)
 
-    def get_queryset(self):
-        return []
+
+class DeleteEntry(DeleteView):
+    model = Entry
+    success_url = reverse_lazy('finances:index')
+
+def delete_entry(request, entry_id):
+    entry = Entry.objects.get(pk=entry_id)
+    entry.delete()
+    return render(request, 'finances/index.html')
+

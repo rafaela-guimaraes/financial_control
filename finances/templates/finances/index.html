@@ -1,7 +1,35 @@
 {% extends 'finances/base_anonymous.html' %}
+{% block title %}Home{% endblock %}
 
 {% block body %}
-<div>
-    <p>Hello World</p>
-</div>
+
+{% if incomes %}
+<h3>Incomes</h3>
+<ul>
+    {% for income in incomes %}
+    <li><a href = "/finances/{{income.id}}/">{{income.description}}</a></li>
+    <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="income_id" value="{{ income.id }}" />
+        <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-trash">Delete</span>
+        </button>
+    </form>
+    {% endfor %}
+</ul>
+{% else %}
+<h3> You don't have any incomes </h3>
+{% endif %}
+
+{% if expenses %}
+<h3>Expenses</h3>
+<ul>
+    {% for expense in expenses %}
+    <li><a href = "/finances/{{expense.id}}/">{{expense.description}}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<h3> You don't have any expenses </h3>
+{% endif %}
+
 {% endblock %}
