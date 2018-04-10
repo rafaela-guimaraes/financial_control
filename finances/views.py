@@ -12,23 +12,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class IndexView(LoginRequiredMixin, View):
     template_name = 'finances/index.html'
     login_url = 'finances:login_user'
-    def get(self, request):
-        try:
-            incomes = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='IN'))
-        except ObjectDoesNotExist:
-            incomes = None
-        try:
-            expenses = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='EX'))
-        except ObjectDoesNotExist:
-            expenses = None
 
+    def get(self, request):
+        incomes = Entry.objects.incomes(request.user)
+        expenses = Entry.objects.expenses(request.user)
+        total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
+        total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
+        
         return render(request, 'finances/index.html', {
                     'incomes': incomes,
                     'expenses': expenses,
+                    'total_incomes': total_incomes,
+                    'total_expenses': total_expenses,
                 })
-
-    def post(self, request):
-        form = self.form_class(request.POST)
 
 
 class UserFormView(View):
@@ -89,6 +85,7 @@ class DeleteEntry(LoginRequiredMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy('finances:index')
 
+
 def login_user(request):
         if request.method == "POST":
             username = request.POST['username']
@@ -103,17 +100,17 @@ def login_user(request):
     
         else:
             return render(request, 'finances/login.html')
-        
+
+
 def logout_user(request):
     logout(request)
     form = UserForm(request.POST or None)
     return render(request, 'finances/login.html', {"form":form})
-      
+
+
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
     return render(request, 'finances/index.html')
 
 
-        
-        
