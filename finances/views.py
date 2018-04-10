@@ -1,6 +1,6 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 from .forms import UserForm, EntryForm
 from .models import Entry, Category
@@ -8,9 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-class IndexView(View):
-    template_name = 'finances/index.html'
 
+class IndexView(LoginRequiredMixin, View):
+    template_name = 'finances/index.html'
+    login_url = 'finances:login_user'
     def get(self, request):
         try:
             incomes = Entry.objects.filter(agent=request.user,category=Category.objects.get(entries_type='IN'))
@@ -33,7 +34,7 @@ class IndexView(View):
 class UserFormView(View):
     form_class = UserForm
     template_name = 'finances/registration_form.html'
-
+    
     def get(self, request):
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
@@ -59,7 +60,8 @@ class UserFormView(View):
         return render(request, self.template_name, {"form": form})
 
 
-class CreateEntry(CreateView):
+class CreateEntry(LoginRequiredMixin, CreateView):
+    login_url = "finances:login_user"
     model = Entry
     fields = ['category', 'description', 'amount', 'entry_date']
 
@@ -70,7 +72,8 @@ class CreateEntry(CreateView):
         return super(CreateEntry, self).form_valid(form)
 
 
-class UpdateEntry(UpdateView):
+class UpdateEntry(LoginRequiredMixin, UpdateView):
+    login_url = 'finances:login_user'
     model = Entry
     fields = ['category', 'description', 'amount', 'entry_date']
 
@@ -81,7 +84,8 @@ class UpdateEntry(UpdateView):
         return super(UpdateEntry, self).form_valid(form)
 
 
-class DeleteEntry(DeleteView):
+class DeleteEntry(LoginRequiredMixin, DeleteView):
+    login_url = 'finances:login_user'
     model = Entry
     success_url = reverse_lazy('finances:index')
 
@@ -100,7 +104,11 @@ def login_user(request):
         else:
             return render(request, 'finances/login.html')
         
-    
+def logout_user(request):
+    logout(request)
+    form = UserForm(request.POST or None)
+    return render(request, 'finances/login.html', {"form":form})
+      
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
