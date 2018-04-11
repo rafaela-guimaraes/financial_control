@@ -44,8 +44,8 @@ class EntryManager(models.Manager):
         for entry in entries:
             amount_sum += entry.amount
         return amount_sum
+    
 
-        
 
 class Entry(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)

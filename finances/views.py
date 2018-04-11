@@ -1,7 +1,7 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import View
+from django.views.generic import View, ListView
 from .forms import UserForm, EntryForm
 from .models import Entry, Category
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,17 +14,7 @@ class IndexView(LoginRequiredMixin, View):
     login_url = 'finances:login_user'
 
     def get(self, request):
-        incomes = Entry.objects.incomes(request.user)
-        expenses = Entry.objects.expenses(request.user)
-        total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
-        total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
-        
-        return render(request, 'finances/index.html', {
-                    'incomes': incomes,
-                    'expenses': expenses,
-                    'total_incomes': total_incomes,
-                    'total_expenses': total_expenses,
-                })
+      return get_list_entries(request, 5, self.template_name)
 
 
 class UserFormView(View):
@@ -60,6 +50,7 @@ class CreateEntry(LoginRequiredMixin, CreateView):
     login_url = "finances:login_user"
     model = Entry
     fields = ['category', 'description', 'amount', 'entry_date']
+    success_url = reverse_lazy('finances:list_entry')
 
     def form_valid(self, form):
         entry = form.save(commit=False)
@@ -68,10 +59,20 @@ class CreateEntry(LoginRequiredMixin, CreateView):
         return super(CreateEntry, self).form_valid(form)
 
 
+class ListEntry(LoginRequiredMixin, View):
+    template_name = 'finances/list_entry.html'
+    login_url = 'finances:login_user'
+
+    def get(self, request):
+        return get_list_entries(request, 0, self.template_name)
+
+
 class UpdateEntry(LoginRequiredMixin, UpdateView):
     login_url = 'finances:login_user'
     model = Entry
     fields = ['category', 'description', 'amount', 'entry_date']
+    success_url = "finances:list_entry"
+
 
     def form_valid(self, form):
         entry = form.save(commit=False)
@@ -83,7 +84,7 @@ class UpdateEntry(LoginRequiredMixin, UpdateView):
 class DeleteEntry(LoginRequiredMixin, DeleteView):
     login_url = 'finances:login_user'
     model = Entry
-    success_url = reverse_lazy('finances:index')
+    success_url = reverse_lazy('finances:list_entry')
 
 
 def login_user(request):
@@ -113,4 +114,21 @@ def delete_entry(request, entry_id):
     entry.delete()
     return render(request, 'finances/index.html')
 
+def get_list_entries(request, limit, template_name):
+    if limit == 0:
+        incomes = Entry.objects.incomes(request.user)
+        expenses = Entry.objects.expenses(request.user)
+    else: 
+        incomes = Entry.objects.incomes(request.user)[:limit]
+        expenses = Entry.objects.expenses(request.user)[:limit]
+
+    total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
+    total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
+    
+    return render(request, template_name, {
+        'incomes': incomes,
+        'expenses': expenses,
+        'total_incomes': total_incomes,
+        'total_expenses': total_expenses,
+    })
 
