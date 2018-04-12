@@ -27,15 +27,15 @@ class Category(models.Model):
 
 class EntryManager(models.Manager):
     
-    def incomes(self, user):
+    def incomes(self, user, month, year):
         try:
-            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='IN'))
+            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='IN'), entry_date__month=month, entry_date__year=year)
         except ObjectDoesNotExist:
             return None
     
-    def expenses(self, user):
+    def expenses(self, user, month, year):
         try:
-            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='EX'))
+            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='EX'), entry_date__month=month, entry_date__year=year)
         except ObjectDoesNotExist:
             return None
     
@@ -45,7 +45,6 @@ class EntryManager(models.Manager):
             amount_sum += entry.amount
         return amount_sum
     
-
 
 class Entry(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
