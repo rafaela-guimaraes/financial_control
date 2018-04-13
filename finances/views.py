@@ -69,11 +69,23 @@ class ListEntry(LoginRequiredMixin, View):
     def post(self, request): 
         return get_list_entries(request, None, self.template_name) 
 
+
+class EntriesStatement(LoginRequiredMixin, View):
+    template_name = 'finances/entries_statement.html'
+    login_url = "finances:login_user"
+
+    def get(self, request):
+       return get_list_entries(request, None, self.template_name)
+    
+    def post(self, request):
+        return get_list_entries(request, None, self.template_name)
+    
+
 class UpdateEntry(LoginRequiredMixin, UpdateView):
     login_url = 'finances:login_user'
     model = Entry
     fields = ['category', 'description', 'amount', 'entry_date']
-    success_url = "finances:list_entry"
+    success_url = reverse_lazy('finances:list_entry')
 
 
     def form_valid(self, form):
@@ -121,14 +133,12 @@ def get_list_entries(request, limit, template_name):
   
     month = int(request.POST.get('month', datetime.date.today().month))
     year = int(request.POST.get('year', datetime.date.today().year))
-
-    incomes = Entry.objects.incomes(request.user,  month, year)[:limit]
-    expenses = Entry.objects.expenses(request.user, month, year)[:limit]
-    
+    incomes = Entry.objects.get_incomes(request.user,  month, year, limit)
+    expenses = Entry.objects.get_expenses(request.user, month, year, limit)
+    all_entries = Entry.objects.get_all_entries(request.user, month, year, None)
     total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
     total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
     
-    print(get_months())
     return render(request, template_name, {
         'incomes': incomes,
         'expenses': expenses,
@@ -138,6 +148,7 @@ def get_list_entries(request, limit, template_name):
         'current_month': month,
         'years': get_years(year, 5),
         'current_year': year,
+        'all_entries': all_entries,
     })
 
 def get_months():
@@ -147,9 +158,7 @@ def get_months():
     return months
 
 def get_years(current_year, limit):
-    print (current_year)
     years = []
-    for i in range(current_year - limit,current_year + limit):
-        print(i)
+    for i in range(current_year - limit, current_year + limit):
         years.append(i)
     return years

@@ -7,12 +7,14 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class Category(models.Model):
+
     INCOME = 'IN'
     EXPENSE = 'EX'
     ENTRY_TYPE_CHOICES = (
         (INCOME, 'INCOME'),
         (EXPENSE, 'EXPENSE'),
     )
+
     entries_type = models.CharField(
         max_length=2,
         choices=ENTRY_TYPE_CHOICES,
@@ -22,29 +24,35 @@ class Category(models.Model):
     description = models.CharField(max_length=100)
 
     def __str__(self):
-        return 'Description: %s' % (self.description)
+        return '%s' % (self.description)
 
 
 class EntryManager(models.Manager):
-    
-    def incomes(self, user, month, year):
+
+    def get_entries(self, user, month, year, limit, entry_type):
         try:
-            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='IN'), entry_date__month=month, entry_date__year=year)
+            return self.order_by('entry_date').filter(
+                agent=user, category__in=Category.objects.filter(entries_type__in=entry_type),
+                entry_date__month=month, entry_date__year=year
+                )[:limit]
         except ObjectDoesNotExist:
             return None
-    
-    def expenses(self, user, month, year):
-        try:
-            return self.filter(agent=user, category__in=Category.objects.filter(entries_type='EX'), entry_date__month=month, entry_date__year=year)
-        except ObjectDoesNotExist:
-            return None
-    
+
+    def get_incomes(self, user, month, year, limit):
+        return self.get_entries(user, month, year, limit, [('IN')])
+
+    def get_expenses(self, user, month, year, limit):
+        return self.get_entries(user, month, year, limit, [('EX')])
+
+    def get_all_entries(self, user, month, year, limit):
+        return self.get_entries(user, month, year, limit, [('IN'), ('EX')])
+
     def get_entries_amount(self, user, entries):
         amount_sum = 0.0
         for entry in entries:
             amount_sum += entry.amount
         return amount_sum
-    
+
 
 class Entry(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
