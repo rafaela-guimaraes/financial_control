@@ -7,7 +7,6 @@
     <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
 </a>
 
-
 {% if incomes %}
 <h3>Incomes R$ {{total_incomes}}</h3>
 <ul>
@@ -25,7 +24,7 @@
 {% else %}
 <h3> You don't have any incomes </h3>
 {% endif %}
-
+<a href="{% url 'finances:list_entry' %}">See more</a>
 {% if expenses %}
 <h3>Expenses R${{total_expenses}}</h3>
 <ul>
@@ -43,5 +42,6 @@
 {% else %}
 <h3> You don't have any expenses </h3>
 {% endif %}
+<a href="{% url 'finances:list_entry' %}">See more</a>
 
 {% endblock %}

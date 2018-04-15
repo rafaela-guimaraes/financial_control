@@ -7,6 +7,7 @@ from .models import Entry, Category
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from collections import defaultdict 
 import datetime, calendar
 
 class IndexView(LoginRequiredMixin, View):
@@ -75,12 +76,16 @@ class EntriesStatement(LoginRequiredMixin, View):
     login_url = "finances:login_user"
 
     def get(self, request):
-       return get_list_entries(request, None, self.template_name)
-    
-    def post(self, request):
-        return get_list_entries(request, None, self.template_name)
-    
+        return get_list_entries(request, None, self.template_name)    
 
+
+class EntriesByCategory(LoginRequiredMixin, View):
+    template_name = 'finances/entries_by_category.html'
+    login_url = "finances:login_user"
+
+    def get(self, request):
+        return get_list_entries(request, None, self.template_name)    
+        
 class UpdateEntry(LoginRequiredMixin, UpdateView):
     login_url = 'finances:login_user'
     model = Entry
@@ -122,7 +127,6 @@ def logout_user(request):
     form = UserForm(request.POST or None)
     return render(request, 'finances/login.html', {"form":form})
 
-
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
@@ -130,7 +134,8 @@ def delete_entry(request, entry_id):
 
 
 def get_list_entries(request, limit, template_name):
-  
+    
+    entry_type = request.GET.get('entry_type', 'all')
     month = int(request.POST.get('month', datetime.date.today().month))
     year = int(request.POST.get('year', datetime.date.today().year))
     incomes = Entry.objects.get_incomes(request.user,  month, year, limit)
@@ -138,8 +143,18 @@ def get_list_entries(request, limit, template_name):
     all_entries = Entry.objects.get_all_entries(request.user, month, year, None)
     total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
     total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
-    
-    return render(request, template_name, {
+    category_amount = Entry.objects.get_amount_expenses_by_category(request.user, month, year, None) 
+    expenses_by_category = get_list_expenses_by_category(request, limit, template_name, month, year)
+    #print(expenses_by_category)
+
+    #dicionario = category_amount[0]
+    #print(category_amount[0]['category__description'])
+    #print(category_amount.get('category__description'))
+
+    for entry in expenses_by_category.values():
+       print(entry[0][1])
+
+    context = {
         'incomes': incomes,
         'expenses': expenses,
         'total_incomes': total_incomes,
@@ -149,7 +164,12 @@ def get_list_entries(request, limit, template_name):
         'years': get_years(year, 5),
         'current_year': year,
         'all_entries': all_entries,
-    })
+        'entry_type': entry_type,
+        'entries_by_category': expenses_by_category,
+        'category_amount' : category_amount,
+    }
+    
+    return render(request, template_name, context)
 
 def get_months():
     months = []
@@ -162,3 +182,31 @@ def get_years(current_year, limit):
     for i in range(current_year - limit, current_year + limit):
         years.append(i)
     return years
+
+def get_list_expenses_by_category(request, limit, template_name, month, year):
+    expenses =  Entry.objects.get_expenses_by_category(request.user, month, year, None) 
+
+    expenses_by_category = {}
+    
+    for result in expenses:
+        key = result['category__description']
+        if result['category__description'] in expenses_by_category:
+            expenses_by_category[result['category__description']].append([
+            result['entry_date'],
+            result['description'],
+            result['amount']
+            ])
+        else: 
+            #expenses_by_category[result['category__description']] = [[
+            #result['entry_date'],
+            #result['description'],
+            #result['amount']]]
+            expenses_by_category.setdefault(key, [])
+            expenses_by_category[key].append([
+            result['entry_date'],
+            result['description'],
+            result['amount']
+            ])
+                
+
+    return expenses_by_category

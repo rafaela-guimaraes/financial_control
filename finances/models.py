@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -48,10 +49,16 @@ class EntryManager(models.Manager):
         return self.get_entries(user, month, year, limit, [('IN'), ('EX')])
 
     def get_entries_amount(self, user, entries):
-        amount_sum = 0.0
-        for entry in entries:
-            amount_sum += entry.amount
-        return amount_sum
+        return entries.aggregate(Sum('amount'))
+    
+    def get_amount_expenses_by_category(self, user, month, year, limit):
+        expenses = self.get_expenses(user, month, year, limit)
+        return expenses.values('category__description').annotate(Sum('amount'))
+    
+    def get_expenses_by_category(self, user, month, year, limit):
+        expenses = self.get_expenses(user, month, year, limit).values('category__description', 'description', 'amount', 'entry_date')
+        return expenses.order_by('category__description', 'entry_date')
+        
 
 
 class Entry(models.Model):
