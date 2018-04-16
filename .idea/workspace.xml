@@ -2,6 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b502bc94-8365-4d72-bcbd-1521e2d65e81" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/finances/migrations/0002_entry_entry_type.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finances/migrations/0003_remove_entry_entry_type.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finances/templates/finances/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finances/templates/finances/entries_by_category.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/finances/templates/finances/entries_statement.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/finances/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/finances/forms.py" afterDir="false" />

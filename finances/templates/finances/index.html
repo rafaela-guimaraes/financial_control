@@ -1,14 +1,10 @@
 {% extends 'finances/base_anonymous.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}Início{% endblock %}
 
 {% block body %}
 
-<a href="{% url 'finances:logout_user' %}">
-    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
-</a>
-
 {% if incomes %}
-<h3>Incomes R$ {{total_incomes}}</h3>
+<h3>Receitas R$ {{total_incomes.amount__sum}}</h3>
 <ul>
     {% for income in incomes %}
     <li><a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} R$ {{income.amount}}</a></li>
@@ -16,17 +12,17 @@
         {% csrf_token %}
         <input type="hidden" name="income_id" value="{{ income.id }}" />
         <button type="submit" class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-trash">Delete</span>
+            <span class="glyphicon glyphicon-trash">Remover</span>
         </button>
     </form>
     {% endfor %}
 </ul>
 {% else %}
-<h3> You don't have any incomes </h3>
+<h3> Você não possui receitas </h3>
 {% endif %}
-<a href="{% url 'finances:list_entry' %}">See more</a>
+<a href="{% url 'finances:list_entry' %}">Ver mais</a>
 {% if expenses %}
-<h3>Expenses R${{total_expenses}}</h3>
+<h3>Despesas R${{total_expenses.amount__sum}}</h3>
 <ul>
     {% for expense in expenses %}
     <li><a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} R$ {{expense.amount}}</a></li>
@@ -40,8 +36,8 @@
     {% endfor %}
 </ul>
 {% else %}
-<h3> You don't have any expenses </h3>
+<h3> Você não possui despesas </h3>
 {% endif %}
-<a href="{% url 'finances:list_entry' %}">See more</a>
+<a href="{% url 'finances:list_entry' %}"> Ver mais </a>
 
 {% endblock %}

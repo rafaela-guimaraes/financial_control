@@ -1,4 +1,5 @@
 {% extends 'finances/base.html' %}
+{% load get_sum %}
 {% block title %}Home{% endblock %}
 
 {% block body %}
@@ -6,17 +7,13 @@
 <h3>Despesas por categoria - {{current_month}}/{{current_year}}</h3>
 
 {% if entries_by_category %}
-    <h3>{{entries_by_category.items}}</h3>
     {% for key, values in entries_by_category.items %}    
         <ul>
-            <li>{{key}}
+            <li>{{key}} - {{category_amount|get_sum:forloop.counter0}}
                 <ul> 
                     {% for value in values %}
                         <li>{{value.0}} - {{value.1}} - R$ {{value.2}} </li>
                     {% endfor %}
-                    <!--{% for v in values.1 %}
-                        <li>{{v}}</li>
-                    {% endfor %} -->
                 </ul>
             </li>
         </ul>

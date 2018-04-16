@@ -1,5 +1,5 @@
 {% extends 'finances/base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}Visão Geral{% endblock %}
 
 {% block body %}
 
@@ -7,7 +7,7 @@
     {% csrf_token %}
     <div class="form-group">
         <label class="control-label col-sm-2" for="id_month">
-            Month:
+            Mês:
         </label>
         <div class="col-sm-10">
             <select name="month" id="month">
@@ -20,7 +20,7 @@
     </div>
     <div class="form-group">
         <label class="control-label col-sm-2" for="id_year">
-            Year:
+            Ano:
         </label>
         <select name="year" id="year">
             {% for year in years %}
@@ -37,7 +37,7 @@
 
 </form>
 {% if incomes %}
-<h3>Incomes R$ {{total_incomes.amount__sum}}</h3>
+<h3>Receitas R$ {{total_incomes.amount__sum}}</h3>
 <ul>
     {% for income in incomes %}
     <li><a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} R$ {{income.amount}}</a></li>
@@ -45,17 +45,17 @@
         {% csrf_token %}
         <input type="hidden" name="income_id" value="{{ income.id }}" />
         <button type="submit" class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-trash">Delete</span>
+            <span class="glyphicon glyphicon-trash">Remover</span>
         </button>
     </form>
     {% endfor %}
 </ul>
 {% else %}
-<h3> You don't have any incomes </h3>
+<h3>Você não possui receitas</h3>
 {% endif %}
 
 {% if expenses %}
-<h3>Expenses R${{total_expenses.amount__sum}}</h3>
+<h3>Despesas R${{total_expenses.amount__sum}}</h3>
 <ul>
     {% for expense in expenses %}
     <li><a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} R$ {{expense.amount}}</a></li>
@@ -63,13 +63,13 @@
         {% csrf_token %}
         <input type="hidden" name="expense_id" value="{{ expense.id }}" />
         <button type="submit" class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-trash">Delete</span>
+            <span class="glyphicon glyphicon-trash">Remover</span>
         </button>
     </form>
     {% endfor %}
 </ul>
 {% else %}
-<h3> You don't have any expenses </h3>
+<h3>Você não possui despesas</h3>
 {% endif %}
 
 {% endblock %}

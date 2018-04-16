@@ -53,7 +53,7 @@ class EntryManager(models.Manager):
     
     def get_amount_expenses_by_category(self, user, month, year, limit):
         expenses = self.get_expenses(user, month, year, limit)
-        return expenses.values('category__description').annotate(Sum('amount'))
+        return expenses.order_by('category__description').values('category__description').annotate(Sum('amount'))
     
     def get_expenses_by_category(self, user, month, year, limit):
         expenses = self.get_expenses(user, month, year, limit).values('category__description', 'description', 'amount', 'entry_date')
