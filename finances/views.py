@@ -85,6 +85,7 @@ class EntriesByCategory(LoginRequiredMixin, View):
 
     def get(self, request):
         return get_list_entries(request, None, self.template_name)    
+
         
 class UpdateEntry(LoginRequiredMixin, UpdateView):
     login_url = 'finances:login_user'
@@ -114,9 +115,10 @@ def login_user(request):
 
             if user is not None:
                 login(request, user)
-                return render(request, 'finances/index.html')        
+                
+                return get_list_entries(request, 5, 'finances/index.html')        
             else: 
-                return render(request, 'finances/login.html', {'error_message': 'Invalid username or password'})
+                return render(request, 'finances/login.html', {'error_message': 'Usuário ou senha inválidos'})
     
         else:
             return render(request, 'finances/login.html')
@@ -144,15 +146,7 @@ def get_list_entries(request, limit, template_name):
     total_incomes = Entry.objects.get_entries_amount(request.user, incomes)
     total_expenses = Entry.objects.get_entries_amount(request.user, expenses)
     category_amount = Entry.objects.get_amount_expenses_by_category(request.user, month, year, None) 
-    expenses_by_category = get_list_expenses_by_category(request, limit, template_name, month, year)
-    #print(expenses_by_category)
-
-    #dicionario = category_amount[0]
-    #print(category_amount[0]['category__description'])
-    #print(category_amount.get('category__description'))
-
-    for entry in expenses_by_category.values():
-       print(entry[0][1])
+    expenses_by_category = get_list_expenses_by_category(request, limit, month, year)
 
     context = {
         'incomes': incomes,
@@ -183,7 +177,7 @@ def get_years(current_year, limit):
         years.append(i)
     return years
 
-def get_list_expenses_by_category(request, limit, template_name, month, year):
+def get_list_expenses_by_category(request, limit, month, year):
     expenses =  Entry.objects.get_expenses_by_category(request.user, month, year, None) 
 
     expenses_by_category = {}
@@ -197,10 +191,6 @@ def get_list_expenses_by_category(request, limit, template_name, month, year):
             result['amount']
             ])
         else: 
-            #expenses_by_category[result['category__description']] = [[
-            #result['entry_date'],
-            #result['description'],
-            #result['amount']]]
             expenses_by_category.setdefault(key, [])
             expenses_by_category[key].append([
             result['entry_date'],
