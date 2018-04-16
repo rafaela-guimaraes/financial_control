@@ -2,21 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b502bc94-8365-4d72-bcbd-1521e2d65e81" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/finances/migrations/0002_entry_entry_type.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/finances/migrations/0003_remove_entry_entry_type.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/finances/templates/finances/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/finances/templates/finances/entries_by_category.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/finances/templates/finances/entries_statement.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/finances/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/finances/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/templates/finances/base_anonymous.html" beforeDir="false" afterPath="$PROJECT_DIR$/finances/templates/finances/base_anonymous.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/templates/finances/entry_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/finances/templates/finances/entry_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/templates/finances/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/finances/templates/finances/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/templates/finances/list_entry.html" beforeDir="false" afterPath="$PROJECT_DIR$/finances/templates/finances/list_entry.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/finances/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/finances/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/finances/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,7 +27,7 @@
         <entry file="file://$PROJECT_DIR$/finances/models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="395">
-              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+              <caret line="76" selection-start-line="76" selection-end-line="76" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -121,7 +108,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1310" height="786" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.0" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -190,7 +176,7 @@
     <entry file="file://$PROJECT_DIR$/finances/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="395">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+          <caret line="76" selection-start-line="76" selection-end-line="76" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

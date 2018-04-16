@@ -9,6 +9,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import defaultdict 
 import datetime, calendar
+from django.utils.dates import MONTHS
+
 
 class IndexView(LoginRequiredMixin, View):
     template_name = 'finances/index.html'
@@ -49,8 +51,8 @@ class UserFormView(View):
 
 class CreateEntry(LoginRequiredMixin, CreateView):
     login_url = "finances:login_user"
-    model = Entry
-    fields = ['category', 'description', 'amount', 'entry_date']
+    template_name = 'finances/entry_form.html'
+    form_class = EntryForm
     success_url = reverse_lazy('finances:list_entry')
 
     def form_valid(self, form):
@@ -89,8 +91,9 @@ class EntriesByCategory(LoginRequiredMixin, View):
         
 class UpdateEntry(LoginRequiredMixin, UpdateView):
     login_url = 'finances:login_user'
-    model = Entry
-    fields = ['category', 'description', 'amount', 'entry_date']
+    template_name = 'finances/entry_form.html'
+    form_class = EntryForm
+    model = EntryForm.Meta.model
     success_url = reverse_lazy('finances:list_entry')
 
 
@@ -132,11 +135,10 @@ def logout_user(request):
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
-    return render(request, 'finances/index.html')
+    return render(request, 'finances/list_entry.html')
 
 
 def get_list_entries(request, limit, template_name):
-    
     entry_type = request.GET.get('entry_type', 'all')
     month = int(request.POST.get('month', datetime.date.today().month))
     year = int(request.POST.get('year', datetime.date.today().year))
@@ -153,7 +155,7 @@ def get_list_entries(request, limit, template_name):
         'expenses': expenses,
         'total_incomes': total_incomes,
         'total_expenses': total_expenses,
-        'months': get_months(),
+        'months': MONTHS.items(),
         'current_month': month,
         'years': get_years(year, 5),
         'current_year': year,
@@ -164,12 +166,6 @@ def get_list_entries(request, limit, template_name):
     }
     
     return render(request, template_name, context)
-
-def get_months():
-    months = []
-    for i in range(1,13):
-        months.append((i, calendar.month_name[i]))
-    return months
 
 def get_years(current_year, limit):
     years = []
