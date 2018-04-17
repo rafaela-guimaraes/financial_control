@@ -1,43 +1,48 @@
-{% extends 'finances/base_anonymous.html' %}
+{% extends 'finances/base.html' %}
 {% block title %}Início{% endblock %}
 
 {% block body %}
 
 {% if incomes %}
-<h3>Receitas R$ {{total_incomes.amount__sum}}</h3>
-<ul>
-    {% for income in incomes %}
-    <li><a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} R$ {{income.amount}}</a></li>
-    <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="income_id" value="{{ income.id }}" />
-        <button type="submit" class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-trash"></span>
-        </button>
-    </form>
-    {% endfor %}
-</ul>
-{% else %}
-<h3> Você não possui receitas </h3>
-{% endif %}
-<a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
-{% if expenses %}
-<h3>Despesas R${{total_expenses.amount__sum}}</h3>
-<ul>
-    {% for expense in expenses %}
-    <li><a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} R$ {{expense.amount}}</a></li>
-    <form action="{% url 'finances:delete_entry' expense.id %}" method="post" style="display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="expense_id" value="{{ expense.id }}" />
-        <button type="submit" class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-trash"></span>
-        </button>
-    </form>
-    {% endfor %}
-</ul>
-{% else %}
-<h3> Você não possui despesas </h3>
-{% endif %}
-<a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
-
+<div class="container-fluid">
+    <h3>Receitas R$ {{total_incomes.amount__sum}}</h3>
+    <ul>
+        {% for income in incomes %}
+        <li>
+            <a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} R$ {{income.amount}}</a>
+            <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="income_id" value="{{ income.id }}" />
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <h3> Você não possui receitas </h3>
+    {% endif %}
+    <a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
+    {% if expenses %}
+    <h3>Despesas R${{total_expenses.amount__sum}}</h3>
+    <ul>
+        {% for expense in expenses %}
+        <li>
+            <a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} R$ {{expense.amount}}</a>
+            <form action="{% url 'finances:delete_entry' expense.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="expense_id" value="{{ expense.id }}" />
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <h3> Você não possui despesas </h3>
+    {% endif %}
+    <a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
+</div>
 {% endblock %}

@@ -60,6 +60,9 @@ class CreateEntry(LoginRequiredMixin, CreateView):
         entry.agent = self.request.user
         entry.save()
         return super(CreateEntry, self).form_valid(form)
+    
+    def post(self, request, entry_type):
+        print(entry_type)
 
 
 class ListEntry(LoginRequiredMixin, View):
@@ -137,6 +140,8 @@ def delete_entry(request, entry_id):
     entry.delete()
     return render(request, 'finances/list_entry.html')
 
+def create_entry(request, entry_type):
+    print(entry_type)
 
 def get_list_entries(request, limit, template_name):
     entry_type = request.GET.get('entry_type', 'all')
