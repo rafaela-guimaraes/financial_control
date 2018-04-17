@@ -1,5 +1,6 @@
 {% extends 'finances/base.html' %}
 {% load format_currency %}
+{% load get_sum %}
 {% block title %}Extrato{% endblock %}
 
 {% block body %}
@@ -58,6 +59,23 @@
             {% endfor %}
         {% endif %}
     </table>
+    <div class="container">
+        <br />
+        <div class="row">
+            <div class="col-sm-6">Entrada</div>
+            <div class="col-sm">
+                {{total_incomes.amount__sum|format_currency_symbol}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">Saída</div>
+            <div class="col-sm"> {{total_expenses.amount__sum|format_currency_symbol}} </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"> Saldo </div>
+            <div class="col-sm">{{total_incomes.amount__sum|get_balance:total_expenses.amount__sum|format_currency_symbol}} </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
