@@ -61,8 +61,6 @@ class CreateEntry(LoginRequiredMixin, CreateView):
         entry.save()
         return super(CreateEntry, self).form_valid(form)
     
-    def post(self, request, entry_type):
-        print(entry_type)
 
 
 class ListEntry(LoginRequiredMixin, View):

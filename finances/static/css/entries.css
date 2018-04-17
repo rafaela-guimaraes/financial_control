@@ -22,3 +22,12 @@ td {
 th {
   padding-left: 2rem;
 }
+
+.expense {
+  color:#FF0000;
+  text-align: right;
+}
+
+.income {
+	text-align: right;
+}

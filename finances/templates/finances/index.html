@@ -1,15 +1,15 @@
 {% extends 'finances/base.html' %}
+{% load format_currency %}
 {% block title %}Início{% endblock %}
-
 {% block body %}
 
 {% if incomes %}
 <div class="container-fluid">
-    <h3>Receitas R$ {{total_incomes.amount__sum}}</h3>
+    <h3>Receitas {{total_incomes.amount__sum|format_currency_symbol}}</h3>
     <ul>
         {% for income in incomes %}
         <li>
-            <a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} R$ {{income.amount}}</a>
+            <a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} {{income.amount|format_currency_symbol}}</a>
             <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="income_id" value="{{ income.id }}" />
@@ -25,11 +25,11 @@
     {% endif %}
     <a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
     {% if expenses %}
-    <h3>Despesas R${{total_expenses.amount__sum}}</h3>
+    <h3>Despesas {{total_expenses.amount__sum|format_currency_symbol}}</h3>
     <ul>
         {% for expense in expenses %}
         <li>
-            <a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} R$ {{expense.amount}}</a>
+            <a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} {{expense.amount|format_currency_symbol}}}</a>
             <form action="{% url 'finances:delete_entry' expense.id %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="expense_id" value="{{ expense.id }}" />

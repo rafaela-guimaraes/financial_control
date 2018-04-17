@@ -1,4 +1,5 @@
 {% extends 'finances/base.html' %}
+{% load format_currency %}
 {% block title %}Extrato{% endblock %}
 
 {% block body %}
@@ -7,10 +8,10 @@
     <div class="filter">
         <form class="form-horizontal" role="form" action="{% url 'finances:entries_statement'%}" method="get" enctype="multipart/form-data">
             <label class="radio-inline">
-                <input type="radio" name="entry_type" value="all" checked="checked">Tudo
+                <input type="radio" name="entry_type" value="all"  {% if entry_type == 'all'%}checked="checked" {% endif %}>Tudo
             </label>
-            <label class="radio-inline"><input type="radio" name="entry_type" value="income">Entrada</label>
-            <label class="radio-inline"><input type="radio" name="entry_type" value="expense">Saída</label>
+            <label class="radio-inline"><input type="radio" name="entry_type" value="income" {% if entry_type == 'income'%}checked="checked" {% endif %}>Entrada</label>
+            <label class="radio-inline"><input type="radio" name="entry_type" value="expense"  {% if entry_type == 'expense'%}checked="checked" {% endif %}>Saída</label>
             <div class="button-filter">
                 <button type="submit" class="btn btn-success">Filtrar</button>
             </div>
@@ -25,32 +26,36 @@
             <th>Valor(R$)</th>
         </tr>
         {% if entry_type == 'income' %}
-        {% for entry in incomes %}
-        <tr>
-            <td>{{entry.entry_date}}</td>
-            <td>{{entry.category.description}}</td>
-            <td>{{entry.description}}</td>
-            <td>{{entry.amount}}</td>
-        </tr>
-        {% endfor %}
+            {% for entry in incomes %}
+            <tr>
+                <td>{{entry.entry_date}}</td>
+                <td>{{entry.category.description}}</td>
+                <td>{{entry.description}}</td>
+                <td class= "income">{{entry.amount|format_currency}}</td>
+            </tr>
+            {% endfor %}
         {% elif entry_type == 'expense' %}
-        {% for entry in expenses %}
-        <tr>
-            <td>{{entry.entry_date}}</td>
-            <td>{{entry.category.description}}</td>
-            <td>{{entry.description}}</td>
-            <td>{{entry.amount}}</td>
-        </tr>
-        {% endfor %}
+            {% for entry in expenses %}
+            <tr>
+                <td>{{entry.entry_date}}</td>
+                <td>{{entry.category.description}}</td>
+                <td>{{entry.description}}</td>
+                <td class= "expense">{{entry.amount|format_currency}} - </td>
+            </tr>
+            {% endfor %}
         {% else %}
-        {% for entry in all_entries %}
-        <tr>
-            <td>{{entry.entry_date}}</td>
-            <td>{{entry.category.description}}</td>
-            <td>{{entry.description}}</td>
-            <td>{{entry.amount}}</td>
-        </tr>
-        {% endfor %}
+            {% for entry in all_entries %}
+            <tr>
+                <td>{{entry.entry_date}}</td>
+                <td>{{entry.category.description}}</td>
+                <td>{{entry.description}}</td>
+                {%if entry.category.entries_type == 'EX'%}
+                    <td class="expense">{{entry.amount|format_currency}} -</td>
+                {% else %}
+                    <td class="income">{{entry.amount|format_currency}}</td>
+                {% endif%}
+            </tr>
+            {% endfor %}
         {% endif %}
     </table>
 </div>

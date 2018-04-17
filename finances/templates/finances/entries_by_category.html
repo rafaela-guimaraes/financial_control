@@ -1,5 +1,6 @@
 {% extends 'finances/base.html' %}
 {% load get_sum %}
+{% load format_currency %}
 {% block title %}Home{% endblock %}
 
 {% block body %}
@@ -9,10 +10,10 @@
 {% if entries_by_category %}
     {% for key, values in entries_by_category.items %}    
         <ul>
-            <li>{{key}} - {{category_amount|get_sum:forloop.counter0}}
+            <li>{{key}} - {{category_amount|get_sum:forloop.counter0|format_currency_symbol}}
                 <ul> 
                     {% for value in values %}
-                        <li>{{value.0}} - {{value.1}} - R$ {{value.2}} </li>
+                        <li>{{value.0}} - {{value.1}} - {{value.2|format_currency_symbol}} </li>
                     {% endfor %}
                 </ul>
             </li>
