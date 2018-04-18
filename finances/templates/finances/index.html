@@ -6,38 +6,53 @@
 {% if incomes %}
 <div class="container-fluid">
     <h3>Receitas {{total_incomes.amount__sum|format_currency_symbol}}</h3>
-    <ul>
-        {% for income in incomes %}
-        <li>
-            {{income.category.description}}: {{income.description}} {{income.amount|format_currency_symbol}}
-            <form action="{% url 'finances:update_entry' income.id %}" method="get" style="display: inline;">
-                {% csrf_token %}
-                <input type="hidden" name="income_id" value="{{ income.id }}" />
-                <input type="hidden" name="entry_type" value="IN"/>
-                <button type="submit" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-edit"></span>
-                </button>
-            </form>
-            <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <input type="hidden" name="income_id" value="{{ income.id }}" />
-                <button type="submit" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
+    {% for income in incomes %}
+    <div class="row">
+        <div class="col-sm-3">
+            {{income.category.description}}
+        </div>
+        <div class="col-sm-3">
+            {{income.description}}
+        </div>
+        <div class="col-sm-3">
+            {{income.amount|format_currency_symbol}}
+        </div>
+         
+        <form action="{% url 'finances:update_entry' income.id %}" method="get" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="income_id" value="{{ income.id }}" />
+            <input type="hidden" name="entry_type" value="IN"/>
+            <button type="submit" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-edit"></span>
+            </button>
+        </form>
+        <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="income_id" value="{{ income.id }}" />
+            <button type="submit" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-trash"></span>
+            </button>
+        </form>
+    </div>
+    {% endfor %}
     {% else %}
-    <h3> Você não possui receitas </h3>
+        <h3> Você não possui receitas </h3>
     {% endif %}
-    <a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
+        <a href="{% url 'finances:list_entry' %}"> <span class="glyphicon glyphicon-plus"></span>&nbsp;Ver mais</a>
+    
     {% if expenses %}
-    <h3>Despesas {{total_expenses.amount__sum|format_currency_symbol}}</h3>
-    <ul>
+        <h3>Despesas {{total_expenses.amount__sum|format_currency_symbol}}</h3>
         {% for expense in expenses %}
-        <li>
-            {{expense.category.description}}: {{expense.description}} {{expense.amount|format_currency_symbol}}
+        <div class="row">
+            <div class="col-sm-3">
+                {{expense.category.description}}
+            </div>
+            <div class="col-sm-3">
+                {{expense.description}}
+            </div>
+            <div class="col-sm-3">
+                {{expense.amount|format_currency_symbol}}
+            </div>
             <form action="{% url 'finances:update_entry' expense.id %}" method="get" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="expense_id" value="{{ expense.id }}" />
@@ -53,9 +68,8 @@
                     <span class="glyphicon glyphicon-trash"></span>
                 </button>
             </form>
-        </li>
+        </div>
         {% endfor %}
-    </ul>
     {% else %}
     <h3> Você não possui despesas </h3>
     {% endif %}
