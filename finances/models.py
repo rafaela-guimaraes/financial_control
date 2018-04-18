@@ -60,7 +60,6 @@ class EntryManager(models.Manager):
         return expenses.order_by('category__description', 'entry_date')
         
 
-
 class Entry(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

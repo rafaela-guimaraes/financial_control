@@ -141,6 +141,7 @@ def logout_user(request):
     form = UserForm(request.POST or None)
     return render(request, 'finances/login.html', {"form":form})
 
+
 def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
@@ -176,11 +177,13 @@ def get_list_entries(request, limit, template_name):
     
     return render(request, template_name, context)
 
+
 def get_years(current_year, limit):
     years = []
     for i in range(current_year - limit, current_year + limit):
         years.append(i)
     return years
+
 
 def get_list_expenses_by_category(request, limit, month, year):
     expenses =  Entry.objects.get_expenses_by_category(request.user, month, year, None) 
