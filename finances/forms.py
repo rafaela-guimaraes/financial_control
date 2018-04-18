@@ -22,7 +22,8 @@ class EntryForm(forms.ModelForm):
         entry_type = kwargs.pop('entry_type')
         super().__init__(*args, **kwargs)
 
-        self.fields['category'].queryset = Category.objects.filter(entries_type=entry_type)
+        self.fields['category'].label = 'Categoria'
+        self.fields['category'].queryset = Category.objects.order_by('description').filter(entries_type=entry_type)
     
     class Meta:
         model = Entry
