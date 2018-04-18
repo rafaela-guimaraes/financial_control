@@ -52,15 +52,19 @@ class UserFormView(View):
 class CreateEntry(LoginRequiredMixin, CreateView):
     login_url = "finances:login_user"
     template_name = 'finances/entry_form.html'
-    form_class = EntryForm
     success_url = reverse_lazy('finances:list_entry')
-
+    form_class = EntryForm
+    
     def form_valid(self, form):
         entry = form.save(commit=False)
         entry.agent = self.request.user
         entry.save()
         return super(CreateEntry, self).form_valid(form)
-    
+        
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['entry_type'] = self.request.GET.get('entry_type', 'expense')
+        return kwargs
 
 
 class ListEntry(LoginRequiredMixin, View):
@@ -97,12 +101,16 @@ class UpdateEntry(LoginRequiredMixin, UpdateView):
     model = EntryForm.Meta.model
     success_url = reverse_lazy('finances:list_entry')
 
-
     def form_valid(self, form):
         entry = form.save(commit=False)
         entry.agent = self.request.user
         entry.save()
         return super(UpdateEntry, self).form_valid(form)
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['entry_type'] = self.request.GET.get('entry_type', 'expense')
+        return kwargs
 
 
 class DeleteEntry(LoginRequiredMixin, DeleteView):
@@ -137,9 +145,7 @@ def delete_entry(request, entry_id):
     entry = Entry.objects.get(pk=entry_id)
     entry.delete()
     return render(request, 'finances/list_entry.html')
-
-def create_entry(request, entry_type):
-    print(entry_type)
+    
 
 def get_list_entries(request, limit, template_name):
     entry_type = request.GET.get('entry_type', 'all')
