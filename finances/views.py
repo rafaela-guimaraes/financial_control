@@ -3,12 +3,10 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View, ListView
 from .forms import UserForm, EntryForm
-from .models import Entry, Category
-from django.core.exceptions import ObjectDoesNotExist
+from .models import Entry
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from collections import defaultdict 
-import datetime, calendar
+import datetime
 from django.utils.dates import MONTHS
 
 

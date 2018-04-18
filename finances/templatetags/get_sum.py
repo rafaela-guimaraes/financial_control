@@ -7,7 +7,7 @@ def get_sum(List, i):
 
 @register.filter
 def get_balance(income, expense):
-    if not (income == None and expense == None):
-        return income - expense
-    else:
+    if income == None or expense == None:
         return 0
+    else:
+        return income - expense
