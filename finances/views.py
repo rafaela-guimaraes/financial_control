@@ -63,7 +63,7 @@ class CreateEntry(LoginRequiredMixin, CreateView):
         
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['entry_type'] = self.request.GET.get('entry_type', 'expense')
+        kwargs['entry_type'] = self.request.GET.get('entry_type', 'EX')
         return kwargs
 
 
@@ -109,7 +109,7 @@ class UpdateEntry(LoginRequiredMixin, UpdateView):
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['entry_type'] = self.request.GET.get('entry_type', 'expense')
+        kwargs['entry_type'] = self.request.GET.get('entry_type', 'EX')
         return kwargs
 
 

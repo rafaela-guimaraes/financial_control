@@ -9,7 +9,15 @@
     <ul>
         {% for income in incomes %}
         <li>
-            <a href = "/finances/{{income.id}}/">{{income.category.description}}: {{income.description}} {{income.amount|format_currency_symbol}}</a>
+            {{income.category.description}}: {{income.description}} {{income.amount|format_currency_symbol}}
+            <form action="{% url 'finances:update_entry' income.id %}" method="get" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="income_id" value="{{ income.id }}" />
+                <input type="hidden" name="entry_type" value="IN"/>
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </button>
+            </form>
             <form action="{% url 'finances:delete_entry' income.id %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="income_id" value="{{ income.id }}" />
@@ -29,7 +37,15 @@
     <ul>
         {% for expense in expenses %}
         <li>
-            <a href = "/finances/{{expense.id}}/">{{expense.category.description}}: {{expense.description}} {{expense.amount|format_currency_symbol}}}</a>
+            {{expense.category.description}}: {{expense.description}} {{expense.amount|format_currency_symbol}}
+            <form action="{% url 'finances:update_entry' expense.id %}" method="get" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="expense_id" value="{{ expense.id }}" />
+                <input type="hidden" name="entry_type" value="EX"/>
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </button>
+            </form>
             <form action="{% url 'finances:delete_entry' expense.id %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="expense_id" value="{{ expense.id }}" />
